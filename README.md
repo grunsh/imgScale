@@ -14,8 +14,12 @@ STORAGE_TYPE=file (memory)
 
 # Docker для тестирования
 В каталоге docker
+```
 docker build -t nginx-with-images .
+```
+```
 docker run -d --name nginx-container -p 8080:80 my-nginx-image
+```
 
 # Makefile
 
