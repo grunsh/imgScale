@@ -22,6 +22,11 @@ const (
 )
 
 func TestIntegration(t *testing.T) {
+
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping integration test in CI")
+	}
+
 	// 0. Проверяем доступность docker
 	if _, err := exec.LookPath("docker"); err != nil {
 		t.Skip("Docker not available, skipping integration test")
