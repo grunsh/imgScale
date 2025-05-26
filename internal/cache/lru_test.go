@@ -16,10 +16,6 @@ type MockStorage struct {
 	mock.Mock
 }
 
-func (m *MockStorage) AssertCalled() {
-	m.Called() // Теперь будет работать
-}
-
 func (m *MockStorage) Get(ctx context.Context, key string) (io.ReadCloser, error) {
 	args := m.Called(ctx, key)
 	if args.Get(0) == nil {
