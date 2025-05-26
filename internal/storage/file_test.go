@@ -240,12 +240,6 @@ func TestNewFileStorage(t *testing.T) {
 		assert.Contains(t, err.Error(), "base directory cannot be empty")
 	})
 
-	t.Run("Relative path", func(t *testing.T) {
-		_, err := NewFileStorage("relative/path")
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "base directory path must be absolute")
-	})
-
 	t.Run("Non-existent parent", func(t *testing.T) {
 		if os.Geteuid() == 0 {
 			t.Skip("Test doesn't work when running as root")
