@@ -35,5 +35,5 @@ jobs:
       - name: Run tests
         run: go test -race -count 100 ./...
 
-      - name: Build
+      - name: Build Binary
         run: go build -v ./imageproxy/server
