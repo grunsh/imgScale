@@ -26,6 +26,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Install test dependencies
+        run: go get github.com/stretchr/testify
+
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
