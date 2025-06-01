@@ -16,7 +16,7 @@ import (
 const (
 	nginxContainerName = "test-nginx"
 	nginxImage         = "my-nginx-image"
-	nginxPort          = "8080"
+	nginxPort          = "8082"
 	appPort            = "8081"
 	testImageName      = "003.jpg"
 )

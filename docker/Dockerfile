@@ -7,12 +7,13 @@ LABEL description="Nginx с 10-тью картинками в каталоге /
 
 # Создаем рабочую директорию для изображений
 RUN mkdir -p /usr/share/nginx/html/images
-
+RUN pwd
+RUN echo "$PWD"
 # Копируем изображения (используем .dockerignore для исключения ненужных файлов)
 COPY ./images/ /usr/share/nginx/html/images/
 
 # Копируем оптимизированную конфигурацию Nginx
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Проверяем корректность конфигурации (валидация перед запуском)
 RUN nginx -t
