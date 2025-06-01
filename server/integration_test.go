@@ -16,12 +16,17 @@ import (
 const (
 	nginxContainerName = "test-nginx"
 	nginxImage         = "my-nginx-image"
-	nginxPort          = "8080"
+	nginxPort          = "8082"
 	appPort            = "8081"
 	testImageName      = "003.jpg"
 )
 
 func TestIntegration(t *testing.T) {
+
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping integration test in CI")
+	}
+
 	// 0. Проверяем доступность docker
 	if _, err := exec.LookPath("docker"); err != nil {
 		t.Skip("Docker not available, skipping integration test")

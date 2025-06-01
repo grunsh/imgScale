@@ -13,50 +13,18 @@ import (
 	Storage "imageproxy/internal/storage"
 )
 
+var (
+	CacheCapacity int
+	ImgStorage    Storage.Storage
+)
+
 func RunServer(cacheCapacity int) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8081"
 	}
 
-	fmt.Printf("Server listening on :%s (cache capacity: %d)\n", port, cacheCapacity)
-	server := &http.Server{
-		Addr:         ":" + port,
-		ReadTimeout:  5 * time.Second,   // максимальное время чтения запроса
-		WriteTimeout: 10 * time.Second,  // максимальное время записи ответа
-		IdleTimeout:  120 * time.Second, // максимальное время ожидания следующего запроса
-	}
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Printf("Server error: %v\n", err)
-		os.Exit(1)
-	}
-}
-
-func cacheCapacity() int {
-	cacheCapacity := 5
-	if envCap := os.Getenv("CACHE_CAPACITY"); envCap != "" {
-		if capacity, err := strconv.Atoi(envCap); err == nil {
-			cacheCapacity = capacity
-		}
-	}
-	return cacheCapacity
-}
-
-func main() {
-	CacheCapacity := cacheCapacity()
-	var storage Storage.Storage
-	var err error
-	if os.Getenv("STORAGE_TYPE") == "memory" {
-		storage = Storage.NewMemoryStorage()
-	} else {
-		storage, err = Storage.NewFileStorage("./image_cache")
-		if err != nil {
-			fmt.Printf("Failed to initialize file storage: %v\n", err)
-			os.Exit(1)
-		}
-	}
-
-	cache := cache.NewLRUCache(CacheCapacity, storage)
+	cache := cache.NewLRUCache(CacheCapacity, ImgStorage)
 	processor := processor.NewImageProcessor(cache)
 
 	// Хендлер для тестирования.
@@ -102,5 +70,42 @@ func main() {
 			fmt.Printf("Failed to write response: %v\n", err)
 		}
 	})
+
+	fmt.Printf("Server listening on :%s (cache capacity: %d)\n", port, cacheCapacity)
+	server := &http.Server{
+		Addr:         ":" + port,
+		ReadTimeout:  5 * time.Second,   // максимальное время чтения запроса
+		WriteTimeout: 10 * time.Second,  // максимальное время записи ответа
+		IdleTimeout:  120 * time.Second, // максимальное время ожидания следующего запроса
+	}
+	if err := server.ListenAndServe(); err != nil {
+		fmt.Printf("Server error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func cacheCapacity() int {
+	cacheCapacity := 5
+	if envCap := os.Getenv("CACHE_CAPACITY"); envCap != "" {
+		if capacity, err := strconv.Atoi(envCap); err == nil {
+			cacheCapacity = capacity
+		}
+	}
+	return cacheCapacity
+}
+
+func main() {
+	CacheCapacity = cacheCapacity()
+	var err error
+	if os.Getenv("STORAGE_TYPE") == "memory" {
+		ImgStorage = Storage.NewMemoryStorage()
+	} else {
+		ImgStorage, err = Storage.NewFileStorage("./image_cache")
+		if err != nil {
+			fmt.Printf("Failed to initialize file ImgStoragetorage: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
 	RunServer(cacheCapacity())
 }
